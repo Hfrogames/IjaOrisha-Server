@@ -1,5 +1,3 @@
-old-js
-!dist/place_holder
 /logs
 /npm-debug.log
 /node_modules
@@ -14,7 +12,9 @@ demo.ts
 src/img
 !src/img/place_holder
 demo.*
+/dist/
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
+!dist/
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
