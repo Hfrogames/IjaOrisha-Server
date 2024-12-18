@@ -10,6 +10,8 @@ export interface SocResponse {
 export enum SOCKET_EVENTS {
     lobbyJoined = 'lobbyJoined',
     sessionPaired = 'sessionPaired',
+    sessionJoined = 'sessionJoined',
+    sessionStart = 'sessionStart',
 }
 
 export interface roomData {

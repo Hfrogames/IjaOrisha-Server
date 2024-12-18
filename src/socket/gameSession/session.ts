@@ -1,5 +1,5 @@
 import {Room} from "../Room";
-import {roomData} from "../interface/interface";
+import {roomData, SOCKET_EVENTS} from "../interface/interface";
 import Echo from "../helper/@echo";
 
 export default class GameSession extends Room {
@@ -17,8 +17,10 @@ export default class GameSession extends Room {
             room.playerTwo = sessionData.playerID;
         }
 
+        Echo.client(ws,{action: SOCKET_EVENTS.sessionJoined});
+
         if (room.playerOneSoc && room.playerTwoSoc) {
-            Echo.roomClient([room.playerOneSoc, room.playerTwoSoc], {action: "startMatch"});
+            Echo.roomClient([room.playerOneSoc, room.playerTwoSoc], {action: SOCKET_EVENTS.sessionStart});
         }
     }
 

@@ -4,7 +4,7 @@ import {SocResponse} from "../interface/interface";
 
 export default class Echo {
 
-    static socClient(webSocket: WebSocket, jsonData: SocResponse) {
+    static socClient(webSocket: any, jsonData: SocResponse) {
 
         webSocket.clients.forEach((client: any) => {
             Echo.client(client, jsonData);
