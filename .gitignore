@@ -1,4 +1,3 @@
-dist/*
 old-js
 !dist/place_holder
 /logs
