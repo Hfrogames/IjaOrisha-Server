@@ -1,0 +1,21 @@
+dist/*
+old-js
+!dist/place_holder
+/logs
+/npm-debug.log
+/node_modules
+.DS_Store
+.env
+app.yaml
+pnpm-lock.yaml
+env_variables.yaml
+.nyc_output
+demo.ts
+.idea/*
+src/img
+!src/img/place_holder
+demo.*
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

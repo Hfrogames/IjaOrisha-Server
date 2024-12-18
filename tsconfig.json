@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "strict": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "noImplicitAny": true, // Raise error on expressions with an implicit 'any' type
+    "strictNullChecks": true, // Ensure strict null checks
+    "strictFunctionTypes": true, // Ensure strict checking of function types
+    "strictBindCallApply": true, // Ensure strict checking of `bind`, `call`, and `apply`
+    "noImplicitThis": true, // Raise error on `this` expressions with an implicit `any` type
+    "alwaysStrict": true, // Ensure 'use strict' is emitted
+    "esModuleInterop": true, // Handle default imports from ES modules
+    "skipLibCheck": true, // Skip type checking of declaration files (optional)
+    "forceConsistentCasingInFileNames": true // Ensure consistent file casing
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ]
+}
