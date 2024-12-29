@@ -16,5 +16,9 @@ export class Room {
         return this.rooms.get(roomID) as roomData;
     }
 
+    Get(roomID: string): roomData {
+        return this.rooms.get(roomID) as roomData;
+    }
+
 
 }

@@ -11,11 +11,14 @@ export default function gmSession(webSocket: any) {
             try {
                 const messageData = JSON.parse(data);
 
-                console.log(messageData);
+                // console.log(messageData);
 
                 switch (messageData.action) {
                     case "join":
                         gameSession.Join(ws, messageData);
+                        break;
+                    case "getBattleData":
+                        gameSession.ReceiveBattleData(ws, messageData);
                         break;
                     default:
                         console.error(messageData.action);
