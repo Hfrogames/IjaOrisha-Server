@@ -11,6 +11,8 @@ export default class Round {
     timeReset!: NodeJS.Timeout;
     playerOneBD!: BattleData;
     playerTwoBD!: BattleData;
+    playerOneHealth: number;
+    playerTwoHealth: number;
 
     isOneBDSet: boolean;
     isTwoBDSet: boolean;
@@ -21,6 +23,7 @@ export default class Round {
         this.timeout = 20;
         this.roomData = roomData;
         this.isRoundActive = roomData.isActive;
+        this.playerOneHealth = this.playerTwoHealth = 20;
         this.isOneBDSet = this.isTwoBDSet = false;
         this.startRound();
     }
@@ -38,7 +41,7 @@ export default class Round {
             DefenseSpell: "",
             AttackPoint: 0,
             DefensePoint: 0,
-            PlayerHealth: 100,
+            PlayerHealth: 20,
         }
         this.playerOneBD = this.playerTwoBD = battleData;
     }
@@ -51,9 +54,10 @@ export default class Round {
             DefenseSpell: "",
             AttackPoint: 0,
             DefensePoint: 0,
-            PlayerHealth: 50,
         }
-        this.playerOneBD = this.playerTwoBD = battleData;
+
+        this.playerOneBD = {...battleData, PlayerHealth: this.playerOneHealth};
+        this.playerTwoBD = {...battleData, PlayerHealth: this.playerTwoHealth};
     }
 
     startRound() {
@@ -74,11 +78,13 @@ export default class Round {
     setPlayerData(playerID: any) {
         const dataSender = playerID.playerID;
 
-        if (dataSender === this.roomData.playerOne) {
+        if (dataSender === this.roomData.playerOne && !this.isOneBDSet) {
             this.playerOneBD = playerID.playerOneBD;
+            this.playerOneBD.PlayerHealth = this.playerOneHealth;
             this.isOneBDSet = true;
-        } else if (dataSender === this.roomData.playerTwo) {
+        } else if (dataSender === this.roomData.playerTwo && !this.isTwoBDSet) {
             this.playerTwoBD = playerID.playerOneBD;
+            this.playerTwoBD.PlayerHealth = this.playerTwoHealth;
             this.isTwoBDSet = true;
         }
 
@@ -88,8 +94,12 @@ export default class Round {
     }
 
     calculateRoundData() {
+        // console.log(this.playerOneBD, this.playerTwoBD);
         const calc = new RoundCalc(this.playerOneBD, this.playerTwoBD);
         calc.calc();
+
+        this.playerOneHealth = calc.plOneResult.PlayerHealth;
+        this.playerTwoHealth = calc.plTwoResult.PlayerHealth;
 
         this.playerOneBD = calc.plOneResult;
         this.playerTwoBD = calc.plTwoResult;
@@ -111,7 +121,7 @@ export default class Round {
 
     restartRound() {
         if (this.currentRound < this.totalRounds)
-            setTimeout(() => this.startRound(), 30 * 1000);
+            setTimeout(() => this.startRound(), 20 * 1000);
         else
             this.endMatch();
     }
@@ -122,6 +132,7 @@ export default class Round {
     }
 
     compileRoundData(action: SOCKET_EVENTS): SocResponse {
+        this.isOneBDSet = this.isTwoBDSet = false;
         return {
             action: action,
             roomID: this.roomData.roomID,
@@ -139,7 +150,7 @@ export default class Round {
 }
 
 // const demoRound = new Round({roomID: "rt235", isActive: true});
-// demoRound.playerOneBD = JSON.parse("{\"AttackCard\":\"sango\",\"DefenseCard\":\"osun\",\"AttackSpell\":\"doubleByTwo\",\"DefenseSpell\":\"divideByTwo\",\"AttackPoint\":10,\"DefensePoint\":8,\"PlayerHealth\":100}");
-// demoRound.playerTwoBD = JSON.parse("{\"AttackCard\":\"sango\",\"DefenseCard\":\"ogun\",\"AttackSpell\":\"None\",\"DefenseSpell\":\"None\",\"AttackPoint\":10,\"DefensePoint\":6,\"PlayerHealth\":100}");
+// demoRound.playerOneBD = JSON.parse("{\"AttackCard\":\"sango\",\"DefenseCard\":\"osun\",\"AttackSpell\":\"doubleByTwo\",\"DefenseSpell\":\"divideByTwo\",\"AttackPoint\":10,\"DefensePoint\":8,\"PlayerHealth\":20}");
+// demoRound.playerTwoBD = JSON.parse("{\"AttackCard\":\"osun\",\"DefenseCard\":\"sango\",\"AttackSpell\":\"divideByTwo\",\"DefenseSpell\":\"doubleByTwo\",\"AttackPoint\":4,\"DefensePoint\":4,\"PlayerHealth\":20}");
 //
 // demoRound.calculateRoundData();

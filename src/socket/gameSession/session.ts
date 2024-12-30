@@ -11,10 +11,10 @@ export default class GameSession extends Room {
 
     Join(ws: any, sessionData: any) {
         const room: roomData = this.Create(sessionData.roomID);
-        if (!room.playerOneSoc) {
+        if (!room.playerOneSoc && sessionData.playerOne === sessionData.playerID) {
             room.playerOneSoc = ws;
             room.playerOne = sessionData.playerID;
-        } else if (!room.playerTwoSoc) {
+        } else if (!room.playerTwoSoc && sessionData.playerTwo === sessionData.playerID) {
             room.playerTwoSoc = ws;
             room.playerTwo = sessionData.playerID;
         }

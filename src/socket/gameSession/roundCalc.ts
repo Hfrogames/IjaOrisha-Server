@@ -14,12 +14,12 @@ export default class RoundCalc {
         this.plTwoResult = this.plTwo;
     }
 
-    prePointSpell = {
-        [Spells.doubleByTwo]: (value) => value * 2,
+    prePointSpell: any = {
+        [Spells.doubleByTwo]: (value: number) => value * 2,
     }
 
-    postPointSpell = {
-        [Spells.divideByTwo]: (value) => value / 2,
+    postPointSpell: any = {
+        [Spells.divideByTwo]: (value: number) => value / 2,
     }
 
     getAttackPoint(battleData: BattleData) {
@@ -34,7 +34,7 @@ export default class RoundCalc {
 
     getDefensePoint(battleData: BattleData) {
         let defenseValue = battleData.DefensePoint;
-        const defenseSpell = this.prePointSpell[battleData.DefensePoint]
+        const defenseSpell = this.prePointSpell[battleData.DefenseSpell]
 
         if (defenseSpell)
             defenseValue = defenseSpell(defenseValue);
@@ -42,7 +42,7 @@ export default class RoundCalc {
         return defenseValue;
     }
 
-    getPostSpellPoint(spell: Spells, value: number) {
+    getPostSpellPoint(spell: string, value: number) {
         const postPointSpell = this.postPointSpell[spell];
 
         if (postPointSpell)
@@ -50,7 +50,7 @@ export default class RoundCalc {
         else return value;
     }
 
-    findWinner(valueOne, valueTwo) {
+    findWinner(valueOne: number, valueTwo: number) {
         const res = valueOne - valueTwo;
         return res > 0 ? res : 0;
     }
@@ -58,14 +58,18 @@ export default class RoundCalc {
     calc() {
         let playerOneAttack = this.getAttackPoint(this.plOne);
         let playerOneDefence = this.getDefensePoint(this.plOne);
-        let playerTwoAttack = this.getDefensePoint(this.plTwo);
+        let playerTwoAttack = this.getAttackPoint(this.plTwo);
         let playerTwoDefence = this.getDefensePoint(this.plTwo);
+
+        // console.log({playerOneAttack, playerOneDefence, playerTwoAttack, playerTwoDefence});
 
         // apply post point spell
         playerOneAttack = this.getPostSpellPoint(this.plTwo.DefenseSpell, playerOneAttack);
         playerOneDefence = this.getPostSpellPoint(this.plTwo.AttackSpell, playerOneDefence);
         playerTwoAttack = this.getPostSpellPoint(this.plOne.DefenseSpell, playerTwoAttack);
         playerTwoDefence = this.getPostSpellPoint(this.plOne.AttackSpell, playerTwoDefence);
+
+        // console.log({playerOneAttack, playerOneDefence, playerTwoAttack, playerTwoDefence});
 
         this.plOneResult.AttackPointSpelled = playerOneAttack;
         this.plOneResult.DefencePointSpelled = playerOneDefence;
@@ -75,16 +79,17 @@ export default class RoundCalc {
         // console.log({playerOneAttack, playerOneDefence, playerTwoAttack, playerTwoDefence});
 
         // calculation point attack
-        playerOneAttack = this.findWinner(playerOneAttack, playerTwoDefence);
-        playerOneDefence = this.findWinner(playerOneDefence, playerTwoAttack);
-        playerTwoAttack = this.findWinner(playerTwoAttack, playerOneDefence);
-        playerTwoDefence = this.findWinner(playerTwoDefence, playerOneAttack);
+        const playerOneAttackScore = this.findWinner(playerOneAttack, playerTwoDefence);
+        const playerOneDefenceScore = this.findWinner(playerOneDefence, playerTwoAttack);
+        const playerTwoAttackScore = this.findWinner(playerTwoAttack, playerOneDefence);
+        const playerTwoDefenceScore = this.findWinner(playerTwoDefence, playerOneAttack);
 
         // console.log({playerOneAttack, playerOneDefence, playerTwoAttack, playerTwoDefence});
+        // console.log({playerOneAttackScore, playerOneDefenceScore, playerTwoAttackScore, playerTwoDefenceScore});
 
         // attack health
-        const playerOneHealth = this.plOne.PlayerHealth - playerTwoAttack;
-        const playerTwoHealth = this.plTwo.PlayerHealth - playerOneAttack;
+        const playerOneHealth = this.plOne.PlayerHealth - playerTwoAttackScore;
+        const playerTwoHealth = this.plTwo.PlayerHealth - playerOneAttackScore;
 
         this.plOneResult.AttackPoint = playerOneAttack;
         this.plOneResult.DefensePoint = playerOneDefence;
@@ -93,5 +98,8 @@ export default class RoundCalc {
         this.plTwoResult.AttackPoint = playerTwoAttack;
         this.plTwoResult.DefensePoint = playerTwoDefence;
         this.plTwoResult.PlayerHealth = playerTwoHealth;
+
+        // console.log(this.plOneResult);
+        // console.log(this.plTwoResult);
     }
 }
