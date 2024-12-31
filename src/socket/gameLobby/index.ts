@@ -15,7 +15,7 @@ export default function wsManager(webSocket: any) {
                 switch (messageData.action) {
                     case "join":
                         Lobby.Join(ws,messageData);
-                        console.log(Lobby.Rooms);
+                        // console.log(Lobby.Rooms);
                         break;
                     default:
                         console.error(messageData.action);

@@ -5,7 +5,7 @@ export default function gmSession(webSocket: any) {
     const gameSession = new GameSession();
 
     webSocket.on('connection', (ws: any) => {
-        console.log("client connected to session.");
+        console.log("client connected to session update.");
 
         ws.on('message', (data: any) => {
             try {

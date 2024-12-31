@@ -24,8 +24,12 @@ export default class GameSession extends Room {
         // both player have joined the battle session
         if (room.playerOneSoc && room.playerTwoSoc) {
             room.isActive = true;
+            console.log("Room created")
             Echo.roomClient([room.playerOneSoc, room.playerTwoSoc], {action: SOCKET_EVENTS.sessionStart});
-            room.matchData = new Round(room);
+            setTimeout(() => {
+                room.matchData = new Round(room);
+                console.log("Round initialized after delay");
+            }, 0);
         }
     }
 
