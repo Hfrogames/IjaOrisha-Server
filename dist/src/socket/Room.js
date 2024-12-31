@@ -13,5 +13,8 @@ class Room {
             });
         return this.rooms.get(roomID);
     }
+    Get(roomID) {
+        return this.rooms.get(roomID);
+    }
 }
 exports.Room = Room;

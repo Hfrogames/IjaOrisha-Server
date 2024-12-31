@@ -15,7 +15,7 @@ function wsManager(webSocket) {
                 switch (messageData.action) {
                     case "join":
                         lobby_1.default.Join(ws, messageData);
-                        console.log(lobby_1.default.Rooms);
+                        // console.log(Lobby.Rooms);
                         break;
                     default:
                         console.error(messageData.action);

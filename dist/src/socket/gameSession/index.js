@@ -8,14 +8,17 @@ const session_1 = __importDefault(require("./session"));
 function gmSession(webSocket) {
     const gameSession = new session_1.default();
     webSocket.on('connection', (ws) => {
-        console.log("client connected to session.");
+        console.log("client connected to session update.");
         ws.on('message', (data) => {
             try {
                 const messageData = JSON.parse(data);
-                console.log(messageData);
+                // console.log(messageData);
                 switch (messageData.action) {
                     case "join":
                         gameSession.Join(ws, messageData);
+                        break;
+                    case "getBattleData":
+                        gameSession.ReceiveBattleData(ws, messageData);
                         break;
                     default:
                         console.error(messageData.action);
