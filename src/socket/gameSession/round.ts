@@ -1,4 +1,4 @@
-import {BattleData, roomData, SOCKET_EVENTS, SocResponse} from "../interface/interface";
+import { BattleData, roomData, SOCKET_EVENTS, SocResponse } from "../interface/interface";
 import Echo from "../helper/@echo";
 import RoundCalc from "./roundCalc";
 
@@ -56,8 +56,8 @@ export default class Round {
             DefensePoint: 0,
         }
 
-        this.playerOneBD = {...battleData, PlayerHealth: this.playerOneHealth};
-        this.playerTwoBD = {...battleData, PlayerHealth: this.playerTwoHealth};
+        this.playerOneBD = { ...battleData, PlayerHealth: this.playerOneHealth };
+        this.playerTwoBD = { ...battleData, PlayerHealth: this.playerTwoHealth };
     }
 
     startRound() {
@@ -71,7 +71,7 @@ export default class Round {
 
     endRound() {
         if (this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
-            Echo.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], {action: SOCKET_EVENTS.formationEnd});
+            Echo.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], { action: SOCKET_EVENTS.formationEnd });
         this.currentRound++;
     }
 
