@@ -13,6 +13,12 @@ class GameSession extends Room_1.Room {
     }
     Join(ws, sessionData) {
         const room = this.Create(sessionData.roomID);
+        this.PairedWithPlayer(ws, room, sessionData);
+        this.PairedWithRobot(ws, room, sessionData);
+    }
+    PairedWithPlayer(ws, room, sessionData) {
+        if (sessionData.playerTwo === interface_1.RoomAgent.Felix)
+            return;
         if (!room.playerOneSoc && sessionData.playerOne === sessionData.playerID) {
             room.playerOneSoc = ws;
             room.playerOne = sessionData.playerID;
@@ -25,13 +31,28 @@ class GameSession extends Room_1.Room {
         // both player have joined the battle session
         if (room.playerOneSoc && room.playerTwoSoc) {
             room.isActive = true;
-            console.log("Room created");
             _echo_1.default.roomClient([room.playerOneSoc, room.playerTwoSoc], { action: interface_1.SOCKET_EVENTS.sessionStart });
-            setTimeout(() => {
-                room.matchData = new round_1.default(room);
-                console.log("Round initialized after delay");
-            }, 0);
+            room.matchData = new round_1.default(room);
         }
+    }
+    PairedWithRobot(ws, room, sessionData) {
+        if (sessionData.playerTwo !== interface_1.RoomAgent.Felix)
+            return;
+        if (!room.playerOneSoc && sessionData.playerOne === sessionData.playerID) {
+            room.playerOneSoc = ws;
+            room.playerOne = sessionData.playerID;
+        }
+        if (room.playerTwo === interface_1.RoomAgent.Felix) {
+            room.playerTwoSoc = undefined;
+            room.playerTwo = interface_1.RoomAgent.Felix;
+        }
+        _echo_1.default.client(ws, { action: interface_1.SOCKET_EVENTS.sessionJoined });
+        setTimeout(() => {
+            room.isActive = true;
+            room.isRobot = true;
+            _echo_1.default.client(ws, { action: interface_1.SOCKET_EVENTS.sessionStart });
+            room.matchData = new round_1.default(room);
+        }, 1000);
     }
     ReceiveBattleData(ws, sessionData) {
         const room = this.Get(sessionData.roomID);

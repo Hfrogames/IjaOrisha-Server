@@ -68,16 +68,19 @@ class RoundCalc {
         // console.log({playerOneAttack, playerOneDefence, playerTwoAttack, playerTwoDefence});
         // console.log({playerOneAttackScore, playerOneDefenceScore, playerTwoAttackScore, playerTwoDefenceScore});
         // attack health
-        const playerOneHealth = this.plOne.PlayerHealth - playerTwoAttackScore;
-        const playerTwoHealth = this.plTwo.PlayerHealth - playerOneAttackScore;
+        const playerOneHealth = this.roundUpToZero(this.plOne.PlayerHealth - playerTwoAttackScore);
+        const playerTwoHealth = this.roundUpToZero(this.plTwo.PlayerHealth - playerOneAttackScore);
         this.plOneResult.AttackPoint = playerOneAttack;
         this.plOneResult.DefensePoint = playerOneDefence;
         this.plOneResult.PlayerHealth = playerOneHealth;
         this.plTwoResult.AttackPoint = playerTwoAttack;
         this.plTwoResult.DefensePoint = playerTwoDefence;
         this.plTwoResult.PlayerHealth = playerTwoHealth;
-        // console.log(this.plOneResult);
-        // console.log(this.plTwoResult);
+        console.log(this.plOneResult);
+        console.log(this.plTwoResult);
+    }
+    roundUpToZero(num) {
+        return num < 0 ? 0 : Math.ceil(num);
     }
 }
 exports.default = RoundCalc;

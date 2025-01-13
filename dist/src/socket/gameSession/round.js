@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const interface_1 = require("../interface/interface");
 const _echo_1 = __importDefault(require("../helper/@echo"));
 const roundCalc_1 = __importDefault(require("./roundCalc"));
+const agentBattleData_1 = __importDefault(require("./agentBattleData"));
 class Round {
     isRoundActive;
     roomData;
@@ -19,13 +20,17 @@ class Round {
     playerTwoHealth;
     isOneBDSet;
     isTwoBDSet;
+    isRobot;
+    agentBattleData;
     constructor(roomData) {
         this.currentRound = 1;
         this.totalRounds = 3;
-        this.timeout = 20;
+        this.timeout = 35;
         this.roomData = roomData;
+        this.isRobot = roomData.isRobot != undefined;
+        this.agentBattleData = new agentBattleData_1.default();
         this.isRoundActive = roomData.isActive;
-        this.playerOneHealth = this.playerTwoHealth = 20;
+        this.playerOneHealth = this.playerTwoHealth = 50;
         this.isOneBDSet = this.isTwoBDSet = false;
         this.startRound();
     }
@@ -61,17 +66,32 @@ class Round {
     }
     startRound() {
         this.generateRound();
-        if (this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
+        if (!this.isRobot && this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
             _echo_1.default.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], this.compileRoundData(interface_1.SOCKET_EVENTS.formationStart));
-        this.timeReset = setTimeout(() => this.endRound(), (this.timeout * 1000));
+        if (this.isRobot && this.roomData.playerOneSoc)
+            _echo_1.default.client(this.roomData.playerOneSoc, this.compileRoundData(interface_1.SOCKET_EVENTS.formationStart));
+        this.timeReset = setTimeout(() => {
+            this.endRound();
+        }, (this.timeout * 1000));
     }
     endRound() {
-        if (this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
+        if (!this.isRobot && this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
             _echo_1.default.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], { action: interface_1.SOCKET_EVENTS.formationEnd });
+        if (this.isRobot && this.roomData.playerOneSoc)
+            _echo_1.default.client(this.roomData.playerOneSoc, this.compileRoundData(interface_1.SOCKET_EVENTS.formationEnd));
         this.currentRound++;
     }
     setPlayerData(playerID) {
         const dataSender = playerID.playerID;
+        this.manageGameDataWithPlayer(dataSender, playerID);
+        this.manageGameDataWithRobot(dataSender, playerID);
+        if (this.isOneBDSet && this.isTwoBDSet) {
+            this.calculateRoundData();
+        }
+    }
+    manageGameDataWithPlayer(dataSender, playerID) {
+        if (this.isRobot)
+            return;
         if (dataSender === this.roomData.playerOne && !this.isOneBDSet) {
             this.playerOneBD = playerID.playerOneBD;
             this.playerOneBD.PlayerHealth = this.playerOneHealth;
@@ -82,8 +102,20 @@ class Round {
             this.playerTwoBD.PlayerHealth = this.playerTwoHealth;
             this.isTwoBDSet = true;
         }
-        if (this.isOneBDSet && this.isTwoBDSet) {
-            this.calculateRoundData();
+    }
+    manageGameDataWithRobot(dataSender, playerID) {
+        if (!this.isRobot)
+            return;
+        console.log(playerID);
+        if (dataSender === this.roomData.playerOne && !this.isOneBDSet) {
+            this.playerOneBD = playerID.playerOneBD;
+            this.playerOneBD.PlayerHealth = this.playerOneHealth;
+            this.isOneBDSet = true;
+            // set robot date
+            this.playerTwoBD = this.agentBattleData.get();
+            console.log("robot data", this.playerTwoBD);
+            this.playerTwoBD.PlayerHealth = this.playerTwoHealth;
+            this.isTwoBDSet = true;
         }
     }
     calculateRoundData() {
@@ -97,8 +129,10 @@ class Round {
         this.sendRoundData();
     }
     sendRoundData() {
-        if (this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
+        if (!this.isRobot && this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
             _echo_1.default.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], this.compileRoundData(interface_1.SOCKET_EVENTS.battleData));
+        if (this.isRobot && this.roomData.playerOneSoc)
+            _echo_1.default.client(this.roomData.playerOneSoc, this.compileRoundData(interface_1.SOCKET_EVENTS.battleData));
         this.findRoundWinner();
     }
     findRoundWinner() {
@@ -106,13 +140,17 @@ class Round {
     }
     restartRound() {
         if (this.currentRound < this.totalRounds)
-            setTimeout(() => this.startRound(), 20 * 1000);
+            setTimeout(() => {
+                this.startRound();
+            }, this.timeout * 1000);
         else
             this.endMatch();
     }
     endMatch() {
-        if (this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
+        if (!this.isRobot && this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
             _echo_1.default.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], this.compileRoundData(interface_1.SOCKET_EVENTS.sessionEnd));
+        if (this.isRobot && this.roomData.playerOneSoc)
+            _echo_1.default.client(this.roomData.playerOneSoc, this.compileRoundData(interface_1.SOCKET_EVENTS.sessionEnd));
     }
     compileRoundData(action) {
         this.isOneBDSet = this.isTwoBDSet = false;
