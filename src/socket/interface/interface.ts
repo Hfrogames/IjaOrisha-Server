@@ -44,6 +44,7 @@ export interface roomData {
     playerTwo?: string,
     matchData?: Round,
     isActive: boolean,
+    isRobot?: boolean,
     roomID: string,
 }
 
@@ -53,13 +54,21 @@ export enum CardType {
 }
 
 export enum Orishas {
-    sango = "Ṣàngó",
-    ogun = "Ògún",
-    osun = "Ọṣun",
-    yemoja = "Yemọja"
+    none = "none",
+    sango = "sango",
+    ogun = "ogun",
+    osun = "osun",
+    yemoja = "yemoja",
+    obatala = "obatala",
+    esu = "esu",
+    oya = "oya",
+    osanyin = "osanyin",
+    oba = "oba",
+    olokun = "olokun",
 }
 
 export enum Spells {
+    none = "none",
     doubleByTwo = "doubleByTwo",
     divideByTwo = "divideByTwo",
 }
@@ -69,4 +78,8 @@ export interface cardSO {
     cardID: Orishas | Spells,
     attack: number,
     defense: number,
+}
+
+export enum RoomAgent {
+    Felix = "felix",
 }
