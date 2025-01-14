@@ -99,8 +99,8 @@ export default class RoundCalc {
         this.plTwoResult.DefensePoint = playerTwoDefence;
         this.plTwoResult.PlayerHealth = playerTwoHealth;
 
-        console.log(this.plOneResult);
-        console.log(this.plTwoResult);
+        // console.log(this.plOneResult);
+        // console.log(this.plTwoResult);
     }
 
     roundUpToZero(num: number): number {

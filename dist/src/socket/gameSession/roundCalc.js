@@ -76,8 +76,8 @@ class RoundCalc {
         this.plTwoResult.AttackPoint = playerTwoAttack;
         this.plTwoResult.DefensePoint = playerTwoDefence;
         this.plTwoResult.PlayerHealth = playerTwoHealth;
-        console.log(this.plOneResult);
-        console.log(this.plTwoResult);
+        // console.log(this.plOneResult);
+        // console.log(this.plTwoResult);
     }
     roundUpToZero(num) {
         return num < 0 ? 0 : Math.ceil(num);

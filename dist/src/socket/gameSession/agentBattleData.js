@@ -6,12 +6,13 @@ class AgentBattleData {
     cardDB;
     spellDB;
     constructor() {
-        this.cardDB = cards_1.cardDB;
-        this.spellDB = cards_1.spellDB;
+        this.cardDB = [...cards_1.cardDB];
+        this.spellDB = [...cards_1.spellDB];
     }
     getRandom(entry, cardType) {
-        if (entry.length == 0)
+        if (entry.length == 0) {
             return this.emptyCard(cardType);
+        }
         const randomIndex = Math.floor(Math.random() * entry.length); // Get random index
         const cardSO = entry[randomIndex];
         entry.splice(randomIndex, 1);

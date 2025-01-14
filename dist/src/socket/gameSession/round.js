@@ -106,14 +106,12 @@ class Round {
     manageGameDataWithRobot(dataSender, playerID) {
         if (!this.isRobot)
             return;
-        console.log(playerID);
         if (dataSender === this.roomData.playerOne && !this.isOneBDSet) {
             this.playerOneBD = playerID.playerOneBD;
             this.playerOneBD.PlayerHealth = this.playerOneHealth;
             this.isOneBDSet = true;
             // set robot date
             this.playerTwoBD = this.agentBattleData.get();
-            console.log("robot data", this.playerTwoBD);
             this.playerTwoBD.PlayerHealth = this.playerTwoHealth;
             this.isTwoBDSet = true;
         }

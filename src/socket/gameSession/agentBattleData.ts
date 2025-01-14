@@ -8,12 +8,16 @@ export default class AgentBattleData {
     spellDB: Array<cardSO>;
 
     constructor() {
-        this.cardDB = cardDB;
-        this.spellDB = spellDB;
+        this.cardDB = [...cardDB];
+        this.spellDB = [...spellDB];
     }
 
     getRandom(entry: Array<cardSO>, cardType: CardType): cardSO {
-        if (entry.length == 0) return this.emptyCard(cardType);
+
+        if (entry.length == 0) {
+            return this.emptyCard(cardType);
+        }
+
 
         const randomIndex = Math.floor(Math.random() * entry.length);// Get random index
         const cardSO = entry[randomIndex];
