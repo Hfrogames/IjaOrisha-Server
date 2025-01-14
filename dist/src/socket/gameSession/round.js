@@ -23,7 +23,7 @@ class Round {
     isRobot;
     agentBattleData;
     constructor(roomData) {
-        this.currentRound = 1;
+        this.currentRound = 0;
         this.totalRounds = 3;
         this.timeout = 35;
         this.roomData = roomData;
@@ -79,13 +79,22 @@ class Round {
             _echo_1.default.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], { action: interface_1.SOCKET_EVENTS.formationEnd });
         if (this.isRobot && this.roomData.playerOneSoc)
             _echo_1.default.client(this.roomData.playerOneSoc, this.compileRoundData(interface_1.SOCKET_EVENTS.formationEnd));
+        this.updateRound();
+    }
+    updateRound() {
+        clearTimeout(this.timeReset);
+        this.timeReset = undefined;
         this.currentRound++;
+        // console.log("current round is " + this.currentRound);
     }
     setPlayerData(playerID) {
+        // console.log(playerID);
         const dataSender = playerID.playerID;
         this.manageGameDataWithPlayer(dataSender, playerID);
         this.manageGameDataWithRobot(dataSender, playerID);
         if (this.isOneBDSet && this.isTwoBDSet) {
+            if (this.timeReset)
+                this.updateRound();
             this.calculateRoundData();
         }
     }
@@ -160,7 +169,7 @@ class Round {
             playerTwo: this.roomData.playerTwo,
             playerTwoBD: this.playerTwoBD,
             roundTimeout: this.timeout,
-            currentRound: this.currentRound,
+            currentRound: this.currentRound + 1,
             totalRounds: this.totalRounds,
         };
     }

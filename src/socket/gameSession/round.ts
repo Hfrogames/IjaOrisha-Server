@@ -1,4 +1,4 @@
-import {BattleData, roomData, SOCKET_EVENTS, SocResponse} from "../interface/interface";
+import { BattleData, roomData, SOCKET_EVENTS, SocResponse } from "../interface/interface";
 import Echo from "../helper/@echo";
 import RoundCalc from "./roundCalc";
 import AgentBattleData from "./agentBattleData";
@@ -9,7 +9,7 @@ export default class Round {
     totalRounds: number;
     currentRound: number;
     timeout: number; // how long each round will last
-    timeReset!: NodeJS.Timeout;
+    timeReset!: NodeJS.Timeout | undefined;
     playerOneBD!: BattleData;
     playerTwoBD!: BattleData;
 
@@ -23,7 +23,7 @@ export default class Round {
     agentBattleData!: AgentBattleData
 
     constructor(roomData: roomData) {
-        this.currentRound = 1;
+        this.currentRound = 0;
         this.totalRounds = 3;
         this.timeout = 35;
         this.roomData = roomData;
@@ -63,8 +63,8 @@ export default class Round {
             DefensePoint: 0,
         }
 
-        this.playerOneBD = {...battleData, PlayerHealth: this.playerOneHealth};
-        this.playerTwoBD = {...battleData, PlayerHealth: this.playerTwoHealth};
+        this.playerOneBD = { ...battleData, PlayerHealth: this.playerOneHealth };
+        this.playerTwoBD = { ...battleData, PlayerHealth: this.playerTwoHealth };
     }
 
     startRound() {
@@ -83,15 +83,25 @@ export default class Round {
 
     endRound() {
         if (!this.isRobot && this.roomData.playerOneSoc && this.roomData.playerTwoSoc)
-            Echo.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], {action: SOCKET_EVENTS.formationEnd});
+            Echo.roomClient([this.roomData.playerOneSoc, this.roomData.playerTwoSoc], { action: SOCKET_EVENTS.formationEnd });
 
         if (this.isRobot && this.roomData.playerOneSoc)
             Echo.client(this.roomData.playerOneSoc, this.compileRoundData(SOCKET_EVENTS.formationEnd));
 
+        this.updateRound();
+    }
+
+    updateRound() {
+        clearTimeout(this.timeReset);
+        this.timeReset = undefined;
         this.currentRound++;
+
+        // console.log("current round is " + this.currentRound);
     }
 
     setPlayerData(playerID: any) {
+        // console.log(playerID);
+
         const dataSender = playerID.playerID;
 
         this.manageGameDataWithPlayer(dataSender, playerID);
@@ -99,6 +109,9 @@ export default class Round {
         this.manageGameDataWithRobot(dataSender, playerID);
 
         if (this.isOneBDSet && this.isTwoBDSet) {
+
+            if (this.timeReset) this.updateRound();
+
             this.calculateRoundData();
         }
     }
@@ -124,7 +137,7 @@ export default class Round {
             this.playerOneBD.PlayerHealth = this.playerOneHealth;
             this.isOneBDSet = true;
 
-// set robot date
+            // set robot date
             this.playerTwoBD = this.agentBattleData.get();
             this.playerTwoBD.PlayerHealth = this.playerTwoHealth;
             this.isTwoBDSet = true;
@@ -189,7 +202,7 @@ export default class Round {
             playerTwo: this.roomData.playerTwo,
             playerTwoBD: this.playerTwoBD,
             roundTimeout: this.timeout,
-            currentRound: this.currentRound,
+            currentRound: this.currentRound + 1,
             totalRounds: this.totalRounds,
         }
     }
